@@ -7,7 +7,7 @@ def fen_parser(fen_code,pieces):
     halfmove,fullmove=0,0
     castle=[0,0,0,0]
     en=None
-    board = np.full([8,8],0)
+    board = np.full(8*8,0)
 
     row,col=0,0
 
@@ -28,9 +28,9 @@ def fen_parser(fen_code,pieces):
                 
                 else:
                     if char.isupper():
-                        board[row][col] = pieces[char.lower()]
+                        board[row*8+col] = pieces[char.lower()]
                     else:
-                        board[row][col] = -pieces[char]
+                        board[row*8+col] = -pieces[char]
                     col+=1
             elif stage_idx == 1:
                 if char == 'w':
@@ -63,4 +63,6 @@ def fen_parser(fen_code,pieces):
                     else:
                         fullmove=int(stage)
 
+    board = list(reversed(list((zip(*[iter(board)]*8)))))
+    board = [j for i in board for j in i]
     return board,player,castle,en,halfmove,fullmove
