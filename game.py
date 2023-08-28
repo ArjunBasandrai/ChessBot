@@ -97,7 +97,7 @@ while running:
             x+=(sq_size)
         y+=(sq_size)
         x=start_x
-        
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
