@@ -119,12 +119,13 @@ while running:
             if event.button == 1:
                 mx,my = get_pos()
                 if is_on_board(mx,my):
-                    moves.legalMoves = []
-                    legalMoves = getLegalMoves(board,player)
-                    print(legalMoves)
+                    # moves.legalMoves = []
+                    legals=[]
+                    legals = getLegalMoves(board,player,legals)
+                    print(legals)
                     target_sq=get_sq(mx,my)
                     move = [start_sq,target_sq]
-                    if value*player > 0 and move in legalMoves:
+                    if value*player > 0 and move in legals:
                         board[target_sq] = value
                         board[t] = 0
                         player = -player
