@@ -1,9 +1,8 @@
 import numpy as np
 
-def fen_parser(fen_code):
+def fen_parser(fen_code,pieces):
 
     fen_code = fen_code.split(' ')
-    pieces={'k' : 1, 'p' : 2, 'b' : 3, 'n' : 4, 'q' : 5, 'r' : 6}
     player=1
     halfmove,fullmove=0,0
     castle=[0,0,0,0]
@@ -65,4 +64,3 @@ def fen_parser(fen_code):
                         fullmove=int(stage)
 
     return board,player,castle,en,halfmove,fullmove
-
