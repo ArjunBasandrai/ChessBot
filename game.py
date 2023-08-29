@@ -7,8 +7,9 @@ from pygame.locals import *
 from pygame.mouse import get_pos
 
 board,player,castle,en,half,full = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
-# board,player,castle,en,half,full = fen_parser("8/2pppppp/8/8/8/8/2PPPPPP/8 w KQkq - 0 1",getPieces())
-print(board)
+# print(board)
+# board = [6, 4, 3, 5, 1, 3, 4, 6, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -2, -2, -2, 0, -2, -2, -2, -6, -4, -3, -5, -1, 0, -4, -6]
+# board,player,castle,en,half,full = fen_parser("RK6/2ppppp1/2n5/2k6/4q3/8/2PPQPPP/8 w KQkq - 0 1",getPieces())
 pygame.init()
 screen_size = (800,600)
 screen = pygame.display.set_mode(screen_size)
@@ -120,14 +121,13 @@ while running:
                 mx,my = get_pos()
                 if is_on_board(mx,my):
                     # moves.legalMoves = []
-                    legals=[]
-                    legals = getLegalMoves(board,player,legals)
-                    print(legals)
+                    legals,mask = getLegalMoves(board,player)
+                    # print(bin(mask))
                     target_sq=get_sq(mx,my)
                     move = [start_sq,target_sq]
                     if value*player > 0 and move in legals:
                         board[target_sq] = value
                         board[t] = 0
                         player = -player
-                
+
     pygame.display.update()
