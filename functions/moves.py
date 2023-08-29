@@ -78,7 +78,7 @@ def getKnightMoves(board,start_square,player,legalMoves):
                     target_square = intermediate_square + directionOffsets[halfstep] * 1
                     target_piece = board[target_square]
                     if target_piece and target_piece//abs(target_piece) == player:
-                        break
+                        continue
                     legalMoves.append([start_square,target_square])       
     return legalMoves
 
@@ -162,7 +162,7 @@ def getLegalMoves(board,player):
             illegals.append(move)
 
     legals = [x for x in legalMoves if x not in illegals]
-    attack_mask = getAttackMask(temp_board,player)
+    attack_mask = getAttackMask(board,player)
     if len(legals)==0:
         return 0 if isChecked(board,player,attack_mask) else 1
     return legals
