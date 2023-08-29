@@ -125,7 +125,7 @@ while running:
         screen.blit(stalemate_text, staletextRect)
         pygame.display.update()
         game_on = False
-        
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -145,7 +145,6 @@ while running:
                 if is_on_board(mx,my):
                     target_sq=get_sq(mx,my)
                     move = [start_sq,target_sq]
-
 
                     if value*player > 0 and move in legals:
                         board,castle = makeMove(board,t,target_sq,value,player,castle)

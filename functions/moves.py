@@ -139,37 +139,55 @@ def getCastle(board,player,castle,legalMoves):
         if i % 2 == 0:
             # print(board[square:square+3],player)
             if numSquaresToEdge[square][3] > 1:
-                if (side and board[square-1]==0 and board[square-2]==0 and board[square-3]==0):
-                    if not (isChecked(square,mask) or isChecked(square-1,mask) or isChecked(square-2,mask) or isChecked(square-3,mask)):
-                        legalMoves.append([square,square-2])
-        else:
-            if numSquaresToEdge[square][2] > 2:
                 if (side and board[square+1]==0 and board[square+2]==0):
                     if not (isChecked(square,mask) or isChecked(square+1,mask) or isChecked(square+2,mask)):
                         legalMoves.append([square,square+2])
+        else:
+            if numSquaresToEdge[square][2] > 2:
+                if (side and board[square-1]==0 and board[square-2]==0 and board[square-3]==0):
+                    if not (isChecked(square,mask) or isChecked(square-1,mask) or isChecked(square-2,mask) or isChecked(square-3,mask)):
+                        legalMoves.append([square,square-2])
     return legalMoves
                                 
 def makeMove(board,start,target,value,player,castle):
     board[target] = value
     if (player == 1):
-        print(target,start)
         if target-start==2 and castle[0]:
             board[start+1]=board[target+1]
             board[target+1]=0
+            castle[0],castle[2]=0,0
 
         if target-start==-2 and castle[2]:
             board[start-1]=board[target-2]
             board[target-2]=0
-
+            castle[0],castle[2]=0,0
+        
     if (player == -1):
-        print(target,start)
         if target-start==2 and castle[1]:
             board[start+1]=board[target+1]
             board[target+1]=0
+            castle[1],castle[3]=0,0
         
         if target-start==-2 and castle[3]:
             board[start-1]=board[target-2]
             board[target-2]=0
+            castle[1],castle[3]=0,0
+    
+    if value == 1:
+        castle[0],castle[1] = 0,0
+    if value == -1:
+        castle[2],castle[3] = 0,0
+
+    if value == 6 and (castle[0] or castle[1]):
+        if start == 0:
+            castle[1] = 0
+        elif start == 7:
+            castle[0] = 0;
+    elif value == -6 and (castle[2] or castle[3]):
+        if start == 56:
+            castle[3] = 0
+        elif start == 63:
+            castle[2] = 0
 
     board[start] = 0
     return board,castle
