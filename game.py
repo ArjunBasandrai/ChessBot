@@ -1,7 +1,7 @@
 import pygame
 from functions.fen import fen_parser
 from functions.pieces import getPieces
-from functions.moves import getLegalMoves, Promote
+from functions.moves import getLegalMoves, Promote, makeMove
 from pygame.locals import *
 from pygame.mouse import get_pos
 from time import sleep
@@ -130,16 +130,15 @@ while running:
             if event.button == 1:
                 mx,my = get_pos()
                 if is_on_board(mx,my):
-                    legals = getLegalMoves(board,player)
+                    legals,castle = getLegalMoves(board,player,castle)
                     target_sq=get_sq(mx,my)
                     move = [start_sq,target_sq]
                     if value*player > 0 and move in legals:
-                        board[target_sq] = value
-                        board[t] = 0
+                        board,castle = makeMove(board,t,target_sq,value,player,castle)
                         board = Promote(board,target_sq,player,5)
                         player = -player
                         render_screen(x,y)
-                        legals = getLegalMoves(board,player)
+                        legals,castle = getLegalMoves(board,player,castle)
                         if legals == 0:
                             print("Checkmate")
                             screen.blit(checkmate_text, matetextRect)

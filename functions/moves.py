@@ -110,8 +110,7 @@ def getKingAttackMap(board,start_square,player):
     king_attack_mask = bitboard.getBitBoard(targets)
     return king_attack_mask
 
-def isChecked(board,player,attack_mask):
-    king_pos = board.index(player)
+def isChecked(king_pos,attack_mask):
     king_bit = np.int64(1) << king_pos
     if king_bit & attack_mask > 0:
         return True
@@ -133,7 +132,33 @@ def getAttackMask(board,player):
                     attack_mask |= (getKnightAttackMap(board,square,-player))
     return attack_mask
 
-def getLegalMoves(board,player):
+def getCastle(board,player,castle,legalMoves):
+    square = board.index(player)
+    mask = getAttackMask(board,player)
+    for i, side in enumerate(castle[:1] if player==1 else castle[2:]):
+        if i % 2 == 0:
+            # print(board[square:square+3])
+            if numSquaresToEdge[square][3] > 1:
+                if (side and board[square+1]==0 and board[square+2]==0):
+                    if not (isChecked(square,mask) or isChecked(square+1,mask) or isChecked(square+2,mask)):
+                        legalMoves.append([square,square+2])
+    return legalMoves
+                                
+def makeMove(board,start,target,value,player,castle):
+    board[target] = value
+    if (player == 1):
+        if target-start==2 and castle[0]:
+            board[start+1]=board[target+1]
+            board[target+1]=0
+    if (player == -1):
+        if target-start==2 and castle[1]:
+            board[start+1]=board[target+1]
+            board[target+1]=0
+
+    board[start] = 0
+    return board,castle
+
+def getLegalMoves(board,player,castle):
     attack_mask = np.int64(0)
     legalMoves=[]
     for square in range(64):
@@ -150,6 +175,7 @@ def getLegalMoves(board,player):
                     legalMoves = getKnightMoves(board,square,player,legalMoves)
 
     illegals = []
+    legalMoves=getCastle(board,player,castle,legalMoves)
     for move in legalMoves:
         temp_board = copy.deepcopy(board)
         start,target = move
@@ -157,15 +183,15 @@ def getLegalMoves(board,player):
         temp_board[start] = 0
 
         attack_mask = getAttackMask(temp_board,player)  
-        incheck = isChecked(temp_board,player,attack_mask)
+        incheck = isChecked(temp_board.index(player),attack_mask)
         if incheck:
             illegals.append(move)
-
     legals = [x for x in legalMoves if x not in illegals]
     attack_mask = getAttackMask(board,player)
+    print(player,isChecked(temp_board.index(player),attack_mask),castle,legals)
     if len(legals)==0:
-        return 0 if isChecked(board,player,attack_mask) else 1
-    return legals
+        return [0,castle] if isChecked(temp_board.index(player),attack_mask) else [1,castle]
+    return legals,castle
 
 def Promote(board,square,player,promoteTo):
     piece = board[square]
@@ -173,4 +199,3 @@ def Promote(board,square,player,promoteTo):
         if (player==1 and square in range(56,64)) or (player==-1 and square in range(0,8)):
             board[square] = player*promoteTo
     return board
-    
