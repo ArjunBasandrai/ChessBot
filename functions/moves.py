@@ -166,3 +166,11 @@ def getLegalMoves(board,player):
     if len(legals)==0:
         return 0 if isChecked(board,player,attack_mask) else 1
     return legals
+
+def Promote(board,square,player,promoteTo):
+    piece = board[square]
+    if abs(piece) == 2:
+        if (player==1 and square in range(56,64)) or (player==-1 and square in range(0,8)):
+            board[square] = player*promoteTo
+    return board
+    

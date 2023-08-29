@@ -1,8 +1,7 @@
 import pygame
 from functions.fen import fen_parser
 from functions.pieces import getPieces
-from functions import moves
-from functions.moves import getLegalMoves
+from functions.moves import getLegalMoves, Promote
 from pygame.locals import *
 from pygame.mouse import get_pos
 from time import sleep
@@ -137,6 +136,7 @@ while running:
                     if value*player > 0 and move in legals:
                         board[target_sq] = value
                         board[t] = 0
+                        board = Promote(board,target_sq,player,5)
                         player = -player
                         render_screen(x,y)
                         legals = getLegalMoves(board,player)
