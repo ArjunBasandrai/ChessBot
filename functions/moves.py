@@ -1,5 +1,6 @@
 from . import bitboard
 import numpy as np
+import copy
 directionOffsets = [8, -8, -1, 1, 7, -7, 9, -9]
 numSquaresToEdge = []
 
@@ -81,23 +82,6 @@ def getKnightMoves(board,start_square,player,legalMoves):
                     legalMoves.append([start_square,target_square])       
     return legalMoves
 
-def makeMove(board,start,target,player):
-    board[target] = board[start]
-    board[start] = 0
-    return getLegalMoves(board,-player)
-
-def isChecked(board,player,legalMoves):
-    king_square = board.index(player)
-    psudeo_legal = legalMoves
-    for move in psudeo_legal[:1]:
-        start = move[0]
-        target = move[1]
-        followup = makeMove(board,start,target,player)
-        for start,target in followup:
-            if target == king_square:
-                return True
-    return False
-
 def getKnightAttackMap(board,start_square,player):
     legalMoves = []
     knightMoves = getKnightMoves(board,start_square,player,legalMoves)
@@ -133,9 +117,25 @@ def isChecked(board,player,attack_mask):
         return True
     return False
 
-def getLegalMoves(board,player):
-    legalMoves=[]
+def getAttackMask(board,player):
     attack_mask = np.int64(0)
+    for square in range(64):
+        piece = board[square]
+        if piece != 0:
+            if piece//abs(piece) == -player:
+                if abs(piece) in (3,5,6):
+                    attack_mask |= (getSlidingAttackMap(board,square,piece,-player))
+                if abs(piece) == 2:
+                    attack_mask |= (getPawnAttackMap(board,square,piece,-player))
+                if abs(piece) == 1:
+                    attack_mask |= (getKingAttackMap(board,square,-player))
+                if abs(piece) == 4:
+                    attack_mask |= (getKnightAttackMap(board,square,-player))
+    return attack_mask
+
+def getLegalMoves(board,player):
+    attack_mask = np.int64(0)
+    legalMoves=[]
     for square in range(64):
         piece = board[square]
         if piece!=0:
@@ -148,15 +148,21 @@ def getLegalMoves(board,player):
                     legalMoves = getKingMoves(board,square,player,legalMoves)
                 if abs(piece) == 4:
                     legalMoves = getKnightMoves(board,square,player,legalMoves)
-                
-            if piece//abs(piece) == -player:
-                if abs(piece) in (3,5,6):
-                    attack_mask |= (getSlidingAttackMap(board,square,piece,-player))
-                if abs(piece) == 2:
-                    attack_mask |= (getPawnAttackMap(board,square,piece,-player))
-                if abs(piece) == 1:
-                    attack_mask |= (getKingAttackMap(board,square,-player))
-                if abs(piece) == 4:
-                    attack_mask |= (getKnightAttackMap(board,square,-player))
-    print(isChecked(board,player,attack_mask))
-    return legalMoves,attack_mask
+
+    illegals = []
+    for move in legalMoves:
+        temp_board = copy.deepcopy(board)
+        start,target = move
+        temp_board[target] = temp_board[start]
+        temp_board[start] = 0
+
+        attack_mask = getAttackMask(temp_board,player)  
+        incheck = isChecked(temp_board,player,attack_mask)
+        if incheck:
+            illegals.append(move)
+
+    legals = [x for x in legalMoves if x not in illegals]
+    attack_mask = getAttackMask(temp_board,player)
+    if len(legals)==0:
+        return 0 if isChecked(board,player,attack_mask) else 1
+    return legals
