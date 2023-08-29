@@ -14,7 +14,7 @@ pygame.init()
 screen_size = (800,600)
 screen = pygame.display.set_mode(screen_size)
 pygame.display.set_caption("Matilda")
-running = True
+running,game_on = True, True
 white_sq_clr = (0xff,0xf4,0xe3)
 black_sq_clr = (0x66,0x88,0x99)
 sq_size=60
@@ -113,12 +113,25 @@ screen.fill((0x2e,0x38,0x42))
 render_screen(x,y)
 while running:
     x,y = start_x,start_y
+    if game_on:
+        legals,castle = getLegalMoves(board,player,castle)
+
+    if legals == 0:
+        screen.blit(checkmate_text, matetextRect)
+        pygame.display.update()
+        game_on = False
+
+    elif legals == 1:
+        screen.blit(stalemate_text, staletextRect)
+        pygame.display.update()
+        game_on = False
+        
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
         if event.type == MOUSEBUTTONDOWN:
-            if event.button == 1:
+            if event.button == 1 and game_on:
                 mx,my = get_pos()
                 if is_on_board(mx,my):
                     start_sq=get_sq(mx,my)
@@ -127,25 +140,17 @@ while running:
                         t = start_sq
 
         if event.type == MOUSEBUTTONUP:
-            if event.button == 1:
-                mx,my = get_pos()
+            if event.button == 1 and game_on:
+                mx,my = get_pos()                
                 if is_on_board(mx,my):
-                    legals,castle = getLegalMoves(board,player,castle)
                     target_sq=get_sq(mx,my)
                     move = [start_sq,target_sq]
+
+
                     if value*player > 0 and move in legals:
                         board,castle = makeMove(board,t,target_sq,value,player,castle)
                         board = Promote(board,target_sq,player,5)
                         player = -player
                         render_screen(x,y)
-                        legals,castle = getLegalMoves(board,player,castle)
-                        if legals == 0:
-                            print("Checkmate")
-                            screen.blit(checkmate_text, matetextRect)
-                            pygame.display.update()
-                        elif legals == 1:
-                            print("Stalemate")
-                            screen.blit(stalemate_text, staletextRect)
-                            pygame.display.update()
 
     pygame.display.update()
