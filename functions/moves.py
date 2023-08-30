@@ -18,6 +18,7 @@ for rank in range(8):
             min(N,E),
             min(S,W)
         ])
+
 def getSlidingMoves(board,start_square,piece,player,legalMoves):
     start = 4 if abs(piece)==3 else 0
     end = 4 if abs(piece)==6 else 8
@@ -149,7 +150,7 @@ def getCastle(board,player,castle,legalMoves):
                         legalMoves.append([square,square-2])
     return legalMoves
                                 
-def makeMove(board,start,target,value,player,castle):
+def makeMove(board,start,target,value,player,castle,en):
     board[target] = value
     if (player == 1):
         if target-start==2 and castle[0]:
@@ -175,7 +176,7 @@ def makeMove(board,start,target,value,player,castle):
     
     if value == 1:
         castle[0],castle[1] = 0,0
-    if value == -1:
+    elif value == -1:
         castle[2],castle[3] = 0,0
 
     if value == 6 and (castle[0] or castle[1]):
@@ -189,10 +190,27 @@ def makeMove(board,start,target,value,player,castle):
         elif start == 63:
             castle[2] = 0
 
-    board[start] = 0
-    return board,castle
+    if value*player == 2 and en and target==(en+(player*8)):
+        board[en]=0
 
-def getLegalMoves(board,player,castle):
+    if value == 2 and start in range(8,16) and target==start+16:
+        en=target
+    elif value == -2 and start in range(48,55) and target==start-16:
+        en=target
+    else:
+        en=None
+
+    board[start] = 0
+
+    return board,castle,en
+
+def en_passsant(board,en,square,player,legalMoves):
+    if board[square]*player == 2 and en:
+        if square-1 == en or square+1 == en:
+            legalMoves.append([square,en+(player*8)])
+    return legalMoves
+
+def getLegalMoves(board,player,castle,en):
     attack_mask = np.int64(0)
     legalMoves=[]
     for square in range(64):
@@ -203,13 +221,14 @@ def getLegalMoves(board,player,castle):
                     legalMoves = getSlidingMoves(board,square,piece,player,legalMoves)
                 if abs(piece) == 2:
                     legalMoves = getPawnMoves(board,square,player,legalMoves,False)
+                    legalMoves = en_passsant(board,en,square,player,legalMoves)
                 if abs(piece) == 1:
                     legalMoves = getKingMoves(board,square,player,legalMoves)
                 if abs(piece) == 4:
                     legalMoves = getKnightMoves(board,square,player,legalMoves)
 
     illegals = []
-    legalMoves=getCastle(board,player,castle,legalMoves)
+    legalMoves = getCastle(board,player,castle,legalMoves)
     for move in legalMoves:
         temp_board = copy.deepcopy(board)
         start,target = move

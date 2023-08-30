@@ -114,7 +114,7 @@ render_screen(x,y)
 while running:
     x,y = start_x,start_y
     if game_on:
-        legals,castle = getLegalMoves(board,player,castle)
+        legals,castle = getLegalMoves(board,player,castle,en)
 
     if legals == 0:
         screen.blit(checkmate_text, matetextRect)
@@ -147,7 +147,7 @@ while running:
                     move = [start_sq,target_sq]
 
                     if value*player > 0 and move in legals:
-                        board,castle = makeMove(board,t,target_sq,value,player,castle)
+                        board,castle,en = makeMove(board,t,target_sq,value,player,castle,en)
                         board = Promote(board,target_sq,player,5)
                         player = -player
                         render_screen(x,y)
