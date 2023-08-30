@@ -6,9 +6,8 @@ from pygame.locals import *
 from pygame.mouse import get_pos
 from time import sleep
 
-# board,player,castle,en,half,full = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
-board,player,castle,en,halfmove,fullmove = fen_parser("8/5k2/8/8/8/8/3PQP2/7K w KQkq - 97 49",getPieces())
-print(board)
+board,player,castle,en,half,full = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
+# board,player,castle,en,halfmove,fullmove = fen_parser("8/5k2/8/8/8/8/3PQP2/7K w KQkq - 0 1",getPieces())
 moves_history=[]
 pygame.init()
 screen_size = (800,600)
@@ -120,7 +119,7 @@ render_screen(x,y)
 while running:
     x,y = start_x,start_y
     if game_on:
-        legals,castle = getLegalMoves(board,player,castle,en,halfmove,fullmove)
+        legals,castle = getLegalMoves(board,player,castle,en,halfmove,moves_history)
 
     if legals == 0:
         screen.blit(checkmate_text, matetextRect)
@@ -158,8 +157,7 @@ while running:
                     move = [start_sq,target_sq]
 
                     if value*player > 0 and move in legals:
-                        board,castle,en,halfmove,fullmove = makeMove(board,t,target_sq,value,player,castle,en,halfmove,fullmove)
-                        board = Promote(board,target_sq,player,5)
+                        board,castle,en,halfmove,fullmove,moves_history = makeMove(board,t,target_sq,value,player,castle,en,halfmove,fullmove,moves_history)
                         player = -player
                         render_screen(x,y)
 

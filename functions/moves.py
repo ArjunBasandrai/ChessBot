@@ -1,4 +1,4 @@
-from . import bitboard
+from . import bitboard, fen_encoder
 import numpy as np
 import copy
 
@@ -152,8 +152,7 @@ def getCastle(board,player,castle,legalMoves):
                         legalMoves.append([square,square-2])
     return legalMoves
                                 
-def makeMove(board,start,target,value,player,castle,en,halfmove,fullmove):
-    
+def makeMove(board,start,target,value,player,castle,en,halfmove,fullmove,history):
     if board[target] > 0 or value==abs(2):
         halfmove = 0
     else:
@@ -212,7 +211,10 @@ def makeMove(board,start,target,value,player,castle,en,halfmove,fullmove):
     board[start] = 0
     if player == -1:
         fullmove+=1
-    return board,castle,en,halfmove,fullmove
+    
+    board = Promote(board,target,player,5)
+    history.append(fen_encoder.encoder(board))
+    return board,castle,en,halfmove,fullmove,history
 
 def en_passsant(board,en,square,player,legalMoves):
     if board[square]*player == 2 and en:
@@ -220,9 +222,17 @@ def en_passsant(board,en,square,player,legalMoves):
             legalMoves.append([square,en+(player*8)])
     return legalMoves
 
-def getLegalMoves(board,player,castle,en,halfmove,fullmove):
+def getLegalMoves(board,player,castle,en,halfmove,history):
     attack_mask = 0
     legalMoves=[]
+    
+    for move in set(history):
+        if history.count(move) > 2:
+            return [2,[]]
+        
+    if halfmove == 100:
+        return [2,[]]
+    
     for square in range(64):
         piece = board[square]
         if piece!=0:
@@ -236,8 +246,6 @@ def getLegalMoves(board,player,castle,en,halfmove,fullmove):
                     legalMoves = getKingMoves(board,square,player,legalMoves)
                 if abs(piece) == 4:
                     legalMoves = getKnightMoves(board,square,player,legalMoves)
-    if halfmove == 100:
-        return [2,[]]
     illegals = []
     legalMoves = getCastle(board,player,castle,legalMoves)
     for move in legalMoves:
@@ -253,6 +261,7 @@ def getLegalMoves(board,player,castle,en,halfmove,fullmove):
 
     legals = [x for x in legalMoves if x not in illegals]
     attack_mask = getAttackMask(board,player)
+
     if len(legals)==0:
         return [0,castle] if isChecked(board.index(player),attack_mask) else [1,castle]
     return legals,castle
