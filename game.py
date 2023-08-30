@@ -8,7 +8,8 @@ from time import sleep
 
 # board,player,castle,en,half,full = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
 board,player,castle,en,halfmove,fullmove = fen_parser("8/5k2/8/8/8/8/3PQP2/7K w KQkq - 97 49",getPieces())
-print(halfmove)
+print(board)
+moves_history=[]
 pygame.init()
 screen_size = (800,600)
 screen = pygame.display.set_mode(screen_size)
@@ -158,7 +159,6 @@ while running:
 
                     if value*player > 0 and move in legals:
                         board,castle,en,halfmove,fullmove = makeMove(board,t,target_sq,value,player,castle,en,halfmove,fullmove)
-                        print(halfmove,fullmove)
                         board = Promote(board,target_sq,player,5)
                         player = -player
                         render_screen(x,y)
