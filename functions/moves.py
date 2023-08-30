@@ -138,7 +138,6 @@ def getCastle(board,player,castle,legalMoves):
     mask = getAttackMask(board,player)
     for i, side in enumerate(castle[:1] if player==1 else castle[2:]):
         if i % 2 == 0:
-            # print(board[square:square+3],player)
             if numSquaresToEdge[square][3] > 1:
                 if (side and board[square+1]==0 and board[square+2]==0):
                     if not (isChecked(square,mask) or isChecked(square+1,mask) or isChecked(square+2,mask)):
@@ -242,7 +241,7 @@ def getLegalMoves(board,player,castle,en):
     legals = [x for x in legalMoves if x not in illegals]
     attack_mask = getAttackMask(board,player)
     if len(legals)==0:
-        return [0,castle] if isChecked(temp_board.index(player),attack_mask) else [1,castle]
+        return [0,castle] if isChecked(board.index(player),attack_mask) else [1,castle]
     return legals,castle
 
 def Promote(board,square,player,promoteTo):

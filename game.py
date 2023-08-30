@@ -7,9 +7,6 @@ from pygame.mouse import get_pos
 from time import sleep
 
 board,player,castle,en,half,full = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
-# print(board)
-# board = [6, 4, 3, 5, 1, 3, 4, 6, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, -3, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, -2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -2, -2, -2, -2, 0, -2, -2, -2, -6, -4, -3, -5, -1, 0, -4, -6]
-# board,player,castle,en,half,full = fen_parser("RK6/2ppppp1/2n5/2k6/4q3/8/2PPQPPP/8 w KQkq - 0 1",getPieces())
 pygame.init()
 screen_size = (800,600)
 screen = pygame.display.set_mode(screen_size)
