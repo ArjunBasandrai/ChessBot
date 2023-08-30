@@ -6,8 +6,9 @@ from pygame.locals import *
 from pygame.mouse import get_pos
 from time import sleep
 
-board,player,castle,en,half,full = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
-# board,player,castle,en,half,full = fen_parser("8/5k2/8/8/8/8/4Q3/7K w KQkq - 0 1",getPieces())
+# board,player,castle,en,half,full = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
+board,player,castle,en,halfmove,fullmove = fen_parser("8/5k2/8/8/8/8/3PQP2/7K w KQkq - 97 49",getPieces())
+print(halfmove)
 pygame.init()
 screen_size = (800,600)
 screen = pygame.display.set_mode(screen_size)
@@ -99,6 +100,7 @@ def render_screen(x,y):
         x=start_x
 
 font = pygame.font.SysFont('cambria', 32)
+
 checkmate_text = font.render('Checkmate', True, (255,255,0),(0,0,255))
 matetextRect = checkmate_text.get_rect()
 matetextRect.center = (400,300)
@@ -107,13 +109,17 @@ stalemate_text = font.render('Stalemate', True, (255,255,0),(0,0,255))
 staletextRect = stalemate_text.get_rect()
 staletextRect.center = (400,300)
 
+draw_text = font.render('Draw', True, (255,255,0),(0,0,255))
+drawtextRect = draw_text.get_rect()
+drawtextRect.center = (400,300)
+
 screen.fill((0x2e,0x38,0x42))
 render_screen(x,y)
 
 while running:
     x,y = start_x,start_y
     if game_on:
-        legals,castle = getLegalMoves(board,player,castle,en)
+        legals,castle = getLegalMoves(board,player,castle,en,halfmove,fullmove)
 
     if legals == 0:
         screen.blit(checkmate_text, matetextRect)
@@ -122,6 +128,11 @@ while running:
 
     elif legals == 1:
         screen.blit(stalemate_text, staletextRect)
+        pygame.display.update()
+        game_on = False
+    
+    elif legals == 2:
+        screen.blit(draw_text, staletextRect)
         pygame.display.update()
         game_on = False
 
@@ -146,7 +157,8 @@ while running:
                     move = [start_sq,target_sq]
 
                     if value*player > 0 and move in legals:
-                        board,castle,en = makeMove(board,t,target_sq,value,player,castle,en)
+                        board,castle,en,halfmove,fullmove = makeMove(board,t,target_sq,value,player,castle,en,halfmove,fullmove)
+                        print(halfmove,fullmove)
                         board = Promote(board,target_sq,player,5)
                         player = -player
                         render_screen(x,y)

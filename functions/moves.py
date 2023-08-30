@@ -152,8 +152,15 @@ def getCastle(board,player,castle,legalMoves):
                         legalMoves.append([square,square-2])
     return legalMoves
                                 
-def makeMove(board,start,target,value,player,castle,en):
+def makeMove(board,start,target,value,player,castle,en,halfmove,fullmove):
+    
+    if board[target] > 0 or value==abs(2):
+        halfmove = 0
+    else:
+        halfmove += 1
+
     board[target] = value
+
     if (player == 1):
         if target-start==2 and castle[0]:
             board[start+1]=board[target+1]
@@ -203,8 +210,9 @@ def makeMove(board,start,target,value,player,castle,en):
         en=None
 
     board[start] = 0
-
-    return board,castle,en
+    if player == -1:
+        fullmove+=1
+    return board,castle,en,halfmove,fullmove
 
 def en_passsant(board,en,square,player,legalMoves):
     if board[square]*player == 2 and en:
@@ -212,7 +220,7 @@ def en_passsant(board,en,square,player,legalMoves):
             legalMoves.append([square,en+(player*8)])
     return legalMoves
 
-def getLegalMoves(board,player,castle,en):
+def getLegalMoves(board,player,castle,en,halfmove,fullmove):
     attack_mask = 0
     legalMoves=[]
     for square in range(64):
@@ -228,7 +236,8 @@ def getLegalMoves(board,player,castle,en):
                     legalMoves = getKingMoves(board,square,player,legalMoves)
                 if abs(piece) == 4:
                     legalMoves = getKnightMoves(board,square,player,legalMoves)
-
+    if halfmove == 100:
+        return [2,[]]
     illegals = []
     legalMoves = getCastle(board,player,castle,legalMoves)
     for move in legalMoves:
@@ -241,6 +250,7 @@ def getLegalMoves(board,player,castle,en):
         incheck = isChecked(temp_board.index(player),attack_mask)
         if incheck:
             illegals.append(move)
+
     legals = [x for x in legalMoves if x not in illegals]
     attack_mask = getAttackMask(board,player)
     if len(legals)==0:
