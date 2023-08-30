@@ -1,6 +1,7 @@
 from . import bitboard
 import numpy as np
 import copy
+
 directionOffsets = [8, -8, -1, 1, 7, -7, 9, -9]
 numSquaresToEdge = []
 
@@ -19,7 +20,7 @@ for rank in range(8):
             min(S,W)
         ])
 
-def getSlidingMoves(board,start_square,piece,player,legalMoves):
+def getSlidingMoves(board,start_square,piece,player,legalMoves,maskonly=False):
     start = 4 if abs(piece)==3 else 0
     end = 4 if abs(piece)==6 else 8
     for direction in range(start,end):
@@ -27,10 +28,12 @@ def getSlidingMoves(board,start_square,piece,player,legalMoves):
             target_square = start_square + directionOffsets[direction] * (n+1)
             target_piece = board[target_square]
             if target_piece and target_piece//abs(target_piece) == player:
-                break
+                if not maskonly:
+                    break
             legalMoves.append([start_square,target_square])
             if target_piece and target_piece//abs(target_piece) == -player:
-                break
+                if not maskonly:
+                    break
     return legalMoves
 
 def getPawnMoves(board,start_square,player,legalMoves,attackonly=False):
@@ -92,7 +95,7 @@ def getKnightAttackMap(board,start_square,player):
 
 def getSlidingAttackMap(board,start_square,piece,player):
     legalMoves = []
-    slidingMoves = getSlidingMoves(board,start_square,piece,player,legalMoves)
+    slidingMoves = getSlidingMoves(board,start_square,piece,player,legalMoves,True)
     targets = [move[1] for move in slidingMoves]
     sliding_attack_mask = bitboard.getBitBoard(targets)
     return sliding_attack_mask
@@ -112,13 +115,13 @@ def getKingAttackMap(board,start_square,player):
     return king_attack_mask
 
 def isChecked(king_pos,attack_mask):
-    king_bit = np.int64(1) << king_pos
+    king_bit = 1 << king_pos
     if king_bit & attack_mask > 0:
         return True
     return False
 
 def getAttackMask(board,player):
-    attack_mask = np.int64(0)
+    attack_mask = 0
     for square in range(64):
         piece = board[square]
         if piece != 0:
@@ -210,7 +213,7 @@ def en_passsant(board,en,square,player,legalMoves):
     return legalMoves
 
 def getLegalMoves(board,player,castle,en):
-    attack_mask = np.int64(0)
+    attack_mask = 0
     legalMoves=[]
     for square in range(64):
         piece = board[square]
