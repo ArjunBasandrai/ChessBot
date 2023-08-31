@@ -1,13 +1,12 @@
 import pygame
 from functions.fen import fen_parser
 from functions.pieces import getPieces
-from functions.moves import getLegalMoves, Promote, makeMove
+from functions.moves import getLegalMoves, makeMove
 from pygame.locals import *
 from pygame.mouse import get_pos
-from time import sleep
 
-board,player,castle,en,half,full = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
-# board,player,castle,en,halfmove,fullmove = fen_parser("8/5k2/8/8/8/8/3PQP2/7K w KQkq - 0 1",getPieces())
+# board,player,castle,en,halfmove,fullmove = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
+board,player,castle,en,halfmove,fullmove = fen_parser("8/5kpR/8/8/8/8/4B3/7K w KQkq - 0 1",getPieces())
 moves_history=[]
 pygame.init()
 screen_size = (800,600)

@@ -30,6 +30,8 @@ def getSlidingMoves(board,start_square,piece,player,legalMoves,maskonly=False):
             if target_piece and target_piece//abs(target_piece) == player:
                 if not maskonly:
                     break
+                elif target_piece*player!=1:
+                    break
             legalMoves.append([start_square,target_square])
             if target_piece and target_piece//abs(target_piece) == -player:
                 if not maskonly:
@@ -261,7 +263,7 @@ def getLegalMoves(board,player,castle,en,halfmove,history):
 
     legals = [x for x in legalMoves if x not in illegals]
     attack_mask = getAttackMask(board,player)
-
+    # print(legals)
     if len(legals)==0:
         return [0,castle] if isChecked(board.index(player),attack_mask) else [1,castle]
     return legals,castle
