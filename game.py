@@ -6,7 +6,7 @@ from pygame.locals import *
 from pygame.mouse import get_pos
 
 # board,player,castle,en,halfmove,fullmove = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
-board,player,castle,en,halfmove,fullmove = fen_parser("8/5kpR/8/8/8/8/4B3/7K w KQkq - 0 1",getPieces())
+board,player,castle,en,halfmove,fullmove = fen_parser("8/5kpR/8/B7/8/8/4b3/7K w KQkq - 0 1",getPieces())
 moves_history=[]
 pygame.init()
 screen_size = (800,600)

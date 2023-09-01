@@ -218,6 +218,37 @@ def makeMove(board,start,target,value,player,castle,en,halfmove,fullmove,history
     history.append(fen_encoder.encoder(board))
     return board,castle,en,halfmove,fullmove,history
 
+def getMaterial(board,player):
+    p = board.count(player*2)
+    b = board.count(player*3)
+    n = board.count(player*4)
+    q = board.count(player*5)
+    r = board.count(player*6)
+    wb,bb=0,0
+    if b:
+        for rank in range(8):
+            for file in range(8):
+                square = rank*8+file
+                if  player*board[square] == 3:
+                    if (rank+file)%2==0:
+                        bb+=1
+                    else:
+                        wb+=1
+    return p,b,n,q,r,wb,bb
+
+def isSufficientMaterial(board):
+    whiteMaterial = getMaterial(board,1)
+    blackMaterial = getMaterial(board,-1)
+    if blackMaterial[:5] == (0,0,0,0,0) and whiteMaterial[:5] == (0,0,0,0,0):
+        return False
+    if (whiteMaterial[:5] == (0,1,0,0,0) and blackMaterial[:5] == (0,0,0,0,0)) or (whiteMaterial[:5] == (0,0,0,0,0) and blackMaterial[:5] == (0,1,0,0,0)):
+        return False
+    if (whiteMaterial[:5] == (0,0,1,0,0) and blackMaterial[:5] == (0,0,0,0,0)) or (whiteMaterial[:5] == (0,0,0,0,0) and blackMaterial[:5] == (0,0,1,0,0)):
+        return False
+    if (whiteMaterial == (0,1,0,0,0,1,0) and blackMaterial == (0,1,0,0,0,0,1)) or (whiteMaterial == (0,1,0,0,0,0,1) and blackMaterial == (0,1,0,0,0,1,0)):
+        return False
+    return True
+
 def en_passsant(board,en,square,player,legalMoves):
     if board[square]*player == 2 and en:
         if square-1 == en or square+1 == en:
@@ -233,6 +264,9 @@ def getLegalMoves(board,player,castle,en,halfmove,history):
             return [2,[]]
         
     if halfmove == 100:
+        return [2,[]]
+    
+    if not isSufficientMaterial(board):
         return [2,[]]
     
     for square in range(64):
@@ -263,7 +297,6 @@ def getLegalMoves(board,player,castle,en,halfmove,history):
 
     legals = [x for x in legalMoves if x not in illegals]
     attack_mask = getAttackMask(board,player)
-    # print(legals)
     if len(legals)==0:
         return [0,castle] if isChecked(board.index(player),attack_mask) else [1,castle]
     return legals,castle
