@@ -6,16 +6,16 @@ from pygame.locals import *
 from pygame.mouse import get_pos
 
 board,player,castle,en,halfmove,fullmove = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
-# board,player,castle,en,halfmove,fullmove = fen_parser("8/5kpR/8/B7/8/8/4b3/7K w KQkq - 0 1",getPieces())
+# board,player,castle,en,halfmove,fullmove = fen_parser("r2qk2r/pp3ppp/2nbpn2/1B1p4/P2P4/2N2Q1P/1PP2PP1/R1B2RK1 w KQkq - 0 1",getPieces())
 moves_history=[]
 pygame.init()
-screen_size = (800,600)
-screen = pygame.display.set_mode(screen_size)
+screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
+screen_size = screen.get_size()
 pygame.display.set_caption("Matilda")
 running,game_on = True, True
 white_sq_clr = (0xff,0xf4,0xe3)
 black_sq_clr = (0x66,0x88,0x99)
-sq_size=60
+sq_size=80
 start_x = (screen_size[0] - 8*sq_size)/2
 start_y = (screen_size[1] + 8*sq_size)/2 - sq_size
 x,y = start_x,start_y
@@ -98,19 +98,20 @@ def render_screen(x,y):
         y-=(sq_size)
         x=start_x
 
-font = pygame.font.SysFont('cambria', 32)
-
-checkmate_text = font.render('Checkmate', True, (255,255,0),(0,0,255))
+font = pygame.font.SysFont('cambria', 48)
+text_color = (250,250,250)
+text_bg = (30,60,60)
+checkmate_text = font.render('Checkmate', True, text_color,text_bg)
 matetextRect = checkmate_text.get_rect()
-matetextRect.center = (400,300)
+matetextRect.center = (screen_size[0]/2,screen_size[1]/2)
 
-stalemate_text = font.render('Stalemate', True, (255,255,0),(0,0,255))
+stalemate_text = font.render('Stalemate', True, text_color,)
 staletextRect = stalemate_text.get_rect()
-staletextRect.center = (400,300)
+staletextRect.center = (screen_size[0]/2,screen_size[1]/2)
 
-draw_text = font.render('Draw', True, (255,255,0),(0,0,255))
+draw_text = font.render('Draw', True, text_color,text_bg)
 drawtextRect = draw_text.get_rect()
-drawtextRect.center = (400,300)
+drawtextRect.center = (screen_size[0]/2,screen_size[1]/2)
 
 screen.fill((0x2e,0x38,0x42))
 render_screen(x,y)
