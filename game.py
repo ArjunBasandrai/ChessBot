@@ -5,8 +5,10 @@ from functions.moves import getLegalMoves, makeMove
 from pygame.locals import *
 from pygame.mouse import get_pos
 
-# board,player,castle,en,halfmove,fullmove = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
-board,player,castle,en,halfmove,fullmove = fen_parser("r2qk2r/pp3ppp/2nbpn2/1B1p4/P2P4/2N2Q1P/1PP2PP1/R1B2RK1 w KQkq - 0 1",getPieces())
+board,player,castle,en,halfmove,fullmove = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
+# board,player,castle,en,halfmove,fullmove = fen_parser("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w KQkq - 0 1",getPieces())
+# board,player,castle,en,halfmove,fullmove = fen_parser("8/2p5/3p4/KP5r/1R3p1k/8/4P1P1/8 w KQkq - 0 1",getPieces())
+
 moves_history=[]
 pygame.init()
 screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)

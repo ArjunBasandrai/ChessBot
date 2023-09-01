@@ -142,16 +142,22 @@ def getCastle(board,player,castle,legalMoves):
     mask = getAttackMask(board,player)
     for i, side in enumerate(castle[:1] if player==1 else castle[2:]):
         if i % 2 == 0:
+            if board[square+3]*player!=6:
+                castle[i]=0
+                continue
             if numSquaresToEdge[square][3] > 1:
                 if (side and board[square+1]==0 and board[square+2]==0):
                     if not (isChecked(square,mask) or isChecked(square+1,mask) or isChecked(square+2,mask)):
                         legalMoves.append([square,square+2])
         else:
+            if board[square-4]*player!=6:
+                castle[i] =0
+                continue
             if numSquaresToEdge[square][2] > 2:
-                if (side and board[square-1]==0 and board[square-2]==0 and board[square-3]==0):
+                if (side and board[square-1]==0 and board[square-2]==0 and board[square-3]==0 and board[square-4]*player==6):
                     if not (isChecked(square,mask) or isChecked(square-1,mask) or isChecked(square-2,mask) or isChecked(square-3,mask)):
                         legalMoves.append([square,square-2])
-    return legalMoves
+    return legalMoves,castle
                                 
 def makeMove(board,start,target,value,player,castle,en,halfmove,fullmove,history):
     if board[target] > 0 or value==abs(2):
@@ -282,9 +288,9 @@ def getLegalMoves(board,player,castle,en,halfmove,history):
                 if abs(piece) == 4:
                     legalMoves = getKnightMoves(board,square,player,legalMoves)
     illegals = []
-    legalMoves = getCastle(board,player,castle,legalMoves)
+    legalMoves,castle = getCastle(board,player,castle,legalMoves)
     for move in legalMoves:
-        temp_board = copy.deepcopy(board)
+        temp_board = board[:]
         start,target = move
         temp_board[target] = temp_board[start]
         temp_board[start] = 0
