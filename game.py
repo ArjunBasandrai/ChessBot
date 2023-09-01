@@ -5,8 +5,8 @@ from functions.moves import getLegalMoves, makeMove
 from pygame.locals import *
 from pygame.mouse import get_pos
 
-board,player,castle,en,halfmove,fullmove = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
-# board,player,castle,en,halfmove,fullmove = fen_parser("r2qk2r/pp3ppp/2nbpn2/1B1p4/P2P4/2N2Q1P/1PP2PP1/R1B2RK1 w KQkq - 0 1",getPieces())
+# board,player,castle,en,halfmove,fullmove = fen_parser("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",getPieces())
+board,player,castle,en,halfmove,fullmove = fen_parser("r2qk2r/pp3ppp/2nbpn2/1B1p4/P2P4/2N2Q1P/1PP2PP1/R1B2RK1 w KQkq - 0 1",getPieces())
 moves_history=[]
 pygame.init()
 screen = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
@@ -105,7 +105,7 @@ checkmate_text = font.render('Checkmate', True, text_color,text_bg)
 matetextRect = checkmate_text.get_rect()
 matetextRect.center = (screen_size[0]/2,screen_size[1]/2)
 
-stalemate_text = font.render('Stalemate', True, text_color,)
+stalemate_text = font.render('Stalemate', True, text_color,text_bg)
 staletextRect = stalemate_text.get_rect()
 staletextRect.center = (screen_size[0]/2,screen_size[1]/2)
 

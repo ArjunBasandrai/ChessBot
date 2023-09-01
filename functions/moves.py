@@ -161,7 +161,7 @@ def makeMove(board,start,target,value,player,castle,en,halfmove,fullmove,history
 
     board[target] = value
 
-    if (player == 1):
+    if (value == 1):
         if target-start==2 and castle[0]:
             board[start+1]=board[target+1]
             board[target+1]=0
@@ -172,7 +172,7 @@ def makeMove(board,start,target,value,player,castle,en,halfmove,fullmove,history
             board[target-2]=0
             castle[0],castle[1]=0,0
         
-    if (player == -1):
+    if (value == -1):
         if target-start==2 and castle[2]:
             board[start+1]=board[target+1]
             board[target+1]=0
