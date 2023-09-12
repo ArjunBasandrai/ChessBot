@@ -1,1 +1,1 @@
-# ChessBot
+# python-chess
